@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 const highlights = [
   {
     title: 'Stargazing domes',
@@ -21,6 +23,36 @@ const schedule = [
 ]
 
 function App() {
+  const [thing, setThing] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [err, setErr] = useState('')
+  const [count, setCount] = useState(0)
+  const [lastLoadedAt, setLastLoadedAt] = useState('')
+
+  function loadSomething() {
+    setLoading(true)
+    setErr('')
+    const id = Math.floor(Math.random() * 10) + 1
+
+    fetch('https://jsonplaceholder.typicode.com/todos/' + id)
+      .then((x) => x.json())
+      .then((x) => {
+        setThing(x)
+        setLoading(false)
+        setCount(count + 1)
+        setLastLoadedAt(new Date().toLocaleTimeString())
+      })
+      .catch((e) => {
+        setErr('api failed maybe')
+        setLoading(false)
+        console.log('some error', e)
+      })
+  }
+
+  useEffect(() => {
+    loadSomething()
+  }, [])
+
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,#fdf2d0_0%,#f6c27a_28%,#1d3557_70%,#0b1320_100%)] text-slate-50">
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-8 lg:px-10">
@@ -75,6 +107,55 @@ function App() {
                   </p>
                 </article>
               ))}
+            </div>
+
+            <div className="mt-8 rounded-[2rem] border border-red-200/20 bg-black/20 p-5 shadow-xl backdrop-blur">
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-red-200/70">
+                    Random API thing
+                  </p>
+                  <h3 className="mt-1 text-2xl font-semibold text-white">
+                    Todo machine
+                  </h3>
+                </div>
+                <button
+                  className="rounded-full bg-red-300 px-4 py-2 text-sm font-semibold text-black"
+                  onClick={loadSomething}
+                >
+                  Load random todo
+                </button>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-xs uppercase text-slate-300">Status</p>
+                  <p className="mt-2 text-lg text-white">
+                    {loading ? 'loading...' : err ? err : 'done i think'}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-xs uppercase text-slate-300">
+                    Load count
+                  </p>
+                  <p className="mt-2 text-lg text-white">{count}</p>
+                  <p className="mt-1 text-xs text-slate-300">
+                    last refresh: {lastLoadedAt || 'never'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-white/10 bg-slate-900/40 p-4">
+                <p className="text-xs uppercase text-slate-400">Raw result</p>
+                <div className="mt-3 space-y-2 text-sm text-slate-200">
+                  <div>id: {thing ? thing.id : '-'}</div>
+                  <div>userId: {thing ? thing.userId : '-'}</div>
+                  <div>title: {thing ? thing.title : 'nothing here yet'}</div>
+                  <div>
+                    done: {thing ? String(thing.completed) : 'not sure'}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
