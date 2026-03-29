@@ -15,6 +15,7 @@ const highlights = [
   },
 ]
 
+
 const schedule = [
   'Arrive for golden hour tea on the cliff deck',
   'Settle into your private dome suite',
