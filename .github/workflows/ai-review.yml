@@ -13,5 +13,5 @@ jobs:
     steps:
       - uses: Mohit-Raj-Singh/MergeMind_AI@v1
         with:
-          provider: gemini
-          api_key: ${{ secrets.GEMINI_API_KEY }}
+          provider: anthropic
+          api_key: ${{ secrets.ANTHROPIC_API_KEY }}
