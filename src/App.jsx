@@ -15,6 +15,7 @@ const highlights = [
   },
 ]
 
+
 const schedule = [
   'Arrive for golden hour tea on the cliff deck',
   'Settle into your private dome suite',
@@ -28,6 +29,12 @@ function App() {
   const [err, setErr] = useState('')
   const [count, setCount] = useState(0)
   const [lastLoadedAt, setLastLoadedAt] = useState('')
+  const [txt, setTxt] = useState('')
+  const [notes, setNotes] = useState([
+    { t: 'wifi was okay', p: 2 },
+    { t: 'food nice but slow', p: 5 },
+    { t: 'view is 10/10', p: 10 },
+  ])
 
   function loadSomething() {
     setLoading(true)
@@ -52,6 +59,22 @@ function App() {
   useEffect(() => {
     loadSomething()
   }, [])
+
+  function addNewThing() {
+    if (txt == '') {
+      alert('write something')
+    } else {
+      notes.push({ t: txt, p: Math.ceil(Math.random() * 10) })
+      setNotes(notes)
+      setTxt('')
+    }
+  }
+
+  const ordered = notes.sort((a, b) => {
+    if (a.p > b.p) return -1
+    if (a.p < b.p) return 1
+    return 0
+  })
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,#fdf2d0_0%,#f6c27a_28%,#1d3557_70%,#0b1320_100%)] text-slate-50">
@@ -154,6 +177,49 @@ function App() {
                   <div>
                     done: {thing ? String(thing.completed) : 'not sure'}
                   </div>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-lime-200/20 bg-lime-100/10 p-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <input
+                    value={txt}
+                    onChange={(e) => setTxt(e.target.value)}
+                    placeholder="type review note"
+                    className="min-w-[220px] flex-1 rounded-full border border-white/10 bg-black/20 px-4 py-3 text-white outline-none"
+                  />
+                  <button
+                    className="rounded-full bg-lime-300 px-4 py-3 text-sm font-semibold text-black"
+                    onClick={addNewThing}
+                  >
+                    Add note
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-lime-100/70">
+                    Review notes but messy
+                  </p>
+                  {ordered.map((x, i) => (
+                    <div
+                      key={i}
+                      className="mb-2 flex items-center justify-between rounded-xl bg-black/20 px-3 py-2 text-sm text-white"
+                    >
+                      <div>{x.t}</div>
+                      <div
+                        className={
+                          'rounded-full px-2 py-1 text-xs ' +
+                          (x.p > 7
+                            ? 'bg-emerald-300 text-black'
+                            : x.p > 4
+                              ? 'bg-yellow-300 text-black'
+                              : 'bg-red-300 text-black')
+                        }
+                      >
+                        score {x.p}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
